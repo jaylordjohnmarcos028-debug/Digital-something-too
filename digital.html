@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF‑8"/><meta name="viewport" content="width=device-width, initial‑scale=1"/>
+  <title>My Blinq‑Style Card</title>
+  <style>
+    body{font-family:sans-serif;margin:0;padding:0;}
+    header{background:#2a2a72;padding:1rem;color:#fff;text-align:center;}
+    main{display:flex;flex-wrap:wrap;gap:2rem;padding:1rem;justify-content:center;}
+    .scene{width:300px;background:#fff;padding:1rem;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    .preview{background:#fafafa;padding:1rem;border-radius:8px;text-align:center;}
+    .preview img{width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:1rem;}
+    input, select{width:100%;padding:0.6rem;margin-bottom:1rem;border:1px solid #ccc;border-radius:4px;}
+    .card-frame{width:280px;margin:0 auto;padding:1rem;border:1px solid #ddd;border-radius:8px;}
+    .contact-links a{margin:0 0.3rem;text-decoration:none;color:#3498db;}
+  </style>
+</head>
+<body>
+  <header><h1>Create Your Card</h1></header>
+  <main>
+    <div class="scene">
+      <h3>Edit Card</h3>
+      <input type="text" id="name" placeholder="Full Name"/>
+      <input type="text" id="title" placeholder="Job Title"/>
+      <input type="url" id="linkedin" placeholder="LinkedIn URL"/>
+      <label>Profile Photo</label><input type="file" id="photo" accept="image/*"/>
+      <label>Theme Color</label><input type="color" id="theme"/>
+      <button id="genQR">Generate QR</button>
+    </div>
+    <div class="scene">
+      <h3>Live Preview</h3>
+      <div class="preview" id="card">
+        <img id="img" src="https://via.placeholder.com/100"/>
+        <h2 id="pn">Your Name</h2>
+        <p id="pt">Job Title</p>
+        <div class="contact-links" id="clinks"></div>
+      </div>
+      <div id="qrcode"></div>
+    </div>
+  </main>
+  <script>
+    const nameEl = document.getElementById('name'), titleEl = document.getElementById('title'),
+      linkedinEl = document.getElementById('linkedin'), themeEl = document.getElementById('theme'),
+      imgEl = document.getElementById('img'), pn = document.getElementById('pn'),
+      pt = document.getElementById('pt'), clinks = document.getElementById('clinks'),
+      genQR = document.getElementById('genQR'), qrcode = document.getElementById('qrcode'),
+      photo = document.getElementById('photo');
+    nameEl.addEventListener('input',()=>pn.textContent=nameEl.value||'Your Name');
+    titleEl.addEventListener('input',()=>pt.textContent=titleEl.value);
+    linkedinEl.addEventListener('input',()=>{
+      clinks.innerHTML = linkedinEl.value
+        ? `<a href="${linkedinEl.value}" target="_blank">LinkedIn</a>` : '';
+    });
+    themeEl.addEventListener('input',()=>document.getElementById('card').style.backgroundColor=themeEl.value);
+    photo.addEventListener('change',function(){
+      const file=this.files[0];if(file){
+        const reader=new FileReader();
+        reader.onload=e=>imgEl.src=e.target.result;
+        reader.readAsDataURL(file);
+      }
+    });
+    genQR.addEventListener('click',()=>{
+      const url=encodeURIComponent(window.location.href);
+      qrcode.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}" alt="QR code"/>`;
+    });
+  </script>
+</body>
+</html>
